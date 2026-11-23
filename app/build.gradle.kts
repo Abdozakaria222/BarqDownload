@@ -11,8 +11,10 @@ android {
         applicationId = "com.abdo.barq"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        // every GitHub build gets a higher number, so it installs as an update
+        val run = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+        versionCode = run
+        versionName = "1.0.$run"
         vectorDrawables { useSupportLibrary = true }
     }
 

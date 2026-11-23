@@ -175,7 +175,8 @@ object VideoEngine {
     fun buildRequest(it: DownloadItem): YoutubeDLRequest {
         val dir = File(it.dir).apply { mkdirs() }
         val r = baseRequest(it.url, it.referer, it.vCookieFile)
-        r.addOption("-o", File(dir, outputBase(it) + ".%(ext)s").absolutePath)
+        // a literal % in a title would be read as a yt-dlp template field
+        r.addOption("-o", File(dir, outputBase(it).replace("%", "%%") + ".%(ext)s").absolutePath)
         r.addOption("--no-playlist")
         r.addOption("--newline")
         r.addOption("--no-mtime")
