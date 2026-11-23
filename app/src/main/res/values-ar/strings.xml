@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">برق للتحميل</string>
     <string name="download_with">تحميل ببرق</string>
+    <string name="browser">متصفح برق</string>
 </resources>

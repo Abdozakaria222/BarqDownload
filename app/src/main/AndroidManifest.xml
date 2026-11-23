@@ -90,6 +90,9 @@
         <activity
             android:name=".ui.BrowserActivity"
             android:exported="false"
+            android:label="@string/browser"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.abdo.barq.browser"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize|uiMode|density" />
 

@@ -4,6 +4,7 @@ package com.abdo.barq.ui
 
 import android.content.Context
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -189,6 +190,14 @@ fun MainScreen() {
             else -> if (filter.startsWith("q:")) list.sortedBy { x -> x.queuePos } else list.sortedByDescending { x -> x.dateAdded }
         }
         list.map { rowOf(it) }
+    }
+
+    BackHandler(enabled = drawer.isOpen || selected.isNotEmpty() || search != null) {
+        when {
+            drawer.isOpen -> scope.launch { drawer.close() }
+            selected.isNotEmpty() -> selected.clear()
+            else -> search = null
+        }
     }
 
     fun openItem(id: Long) {

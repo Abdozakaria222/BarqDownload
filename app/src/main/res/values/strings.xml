@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Barq Download</string>
     <string name="download_with">Download with Barq</string>
+    <string name="browser">Barq Browser</string>
 </resources>

@@ -105,6 +105,16 @@ class BrowserActivity : AppCompatActivity() {
         setContent { BarqTheme { BrowserUi(start) } }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        intent.getStringExtra("url")?.let { u -> web?.loadUrl(fix(u)) }
+    }
+
+    private fun goMain(s: com.abdo.barq.ui.Screen) {
+        Ui.go(s)
+        toMain(Intent())
+    }
+
     override fun onDestroy() {
         web?.let { (it.parent as? ViewGroup)?.removeView(it); it.destroy() }
         web = null
@@ -350,7 +360,7 @@ class BrowserActivity : AppCompatActivity() {
                 }
             }
         }
-        add?.let { r -> AddUrlDialog(r) { add = null } }
+        add?.let { r -> AddUrlDialog(r, onNavigate = { s -> goMain(s) }) { add = null } }
         linkMenu?.let { link ->
             AlertDialog(
                 onDismissRequest = { linkMenu = null },

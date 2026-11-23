@@ -291,7 +291,13 @@ object Manager {
         for (id in ids) {
             val it = find(id) ?: continue
             runners.remove(id)?.stop()
+            val inSession = it.kind == Kind.TORRENT && TorrentEngine.handle(it) != null
             if (it.kind == Kind.TORRENT) TorrentEngine.remove(it, deleteFiles)
+            if (deleteFiles && it.kind == Kind.TORRENT && !inSession && it.fileName.isNotBlank()) {
+                // the torrent is not loaded any more: delete what it downloaded ourselves
+                val f = File(it.dir, it.fileName)
+                if (f.exists() && f.canonicalPath != File(it.dir).canonicalPath) f.deleteRecursively()
+            }
             if (deleteFiles) {
                 partFileFor(it).delete()
                 if (it.status == St.DONE && it.kind != Kind.TORRENT) File(it.dir, it.fileName).delete()
@@ -566,9 +572,10 @@ object Manager {
         if (tickCount % 10 == 0) applyLimits()
         if (runners.isNotEmpty() || items.any { it.seeding }) {
             tick.value = tick.value + 1
-            DownloadService.refresh()
             if (now - lastSave > 3000) { lastSave = now; Store.saveSoon(10) }
         }
+        // also when nothing runs any more: the service then stops itself and frees the wake lock
+        DownloadService.refresh()
         if (Prefs.wifiOnly && tickCount % 15 == 0 && items.any { it.status == St.WAITING } && runCatching { onWifi() }.getOrDefault(false)) pump()
     }
 

@@ -88,7 +88,7 @@ fun queueOptions(withNone: Boolean = false): List<Pair<String?, String>> =
 
 /** "Download File Info": the window shown for every new link. */
 @Composable
-fun AddUrlDialog(req: AddRequest, onClose: () -> Unit) {
+fun AddUrlDialog(req: AddRequest, onNavigate: (Screen) -> Unit = { Ui.go(it) }, onClose: () -> Unit) {
     val ctx = LocalContext.current
     var url by remember { mutableStateOf(req.url) }
     var name by remember { mutableStateOf(req.name?.let { Names.sanitize(it) } ?: Names.fromUrl(GDrive.direct(req.url))) }
@@ -151,10 +151,10 @@ fun AddUrlDialog(req: AddRequest, onClose: () -> Unit) {
 
     fun commit(start: Boolean, numbered: Boolean = false, replace: Boolean = false) {
         val u = url.trim()
-        if (u.startsWith("magnet:", true)) { onClose(); Ui.go(Screen.Torrent(magnet = u)); return }
+        if (u.startsWith("magnet:", true)) { onClose(); onNavigate(Screen.Torrent(magnet = u)); return }
         val it = create(numbered, replace)
         Manager.add(it, start, if (start) null else queue)
-        if (start && Prefs.showProgress == 0) Ui.go(Screen.Details(it.id))
+        if (start && Prefs.showProgress == 0) onNavigate(Screen.Details(it.id))
         onClose()
     }
 
@@ -165,7 +165,7 @@ fun AddUrlDialog(req: AddRequest, onClose: () -> Unit) {
             when (Prefs.duplicatePolicy) {
                 0 -> { dupItem = dup; return }
                 2 -> { Manager.delete(listOf(dup.id), false); commit(start, replace = true); return }
-                3 -> { onClose(); if (dup.status == St.DONE) Ui.go(Screen.Details(dup.id)) else Manager.start(dup.id); return }
+                3 -> { onClose(); if (dup.status == St.DONE) onNavigate(Screen.Details(dup.id)) else Manager.start(dup.id); return }
                 else -> { commit(start, numbered = true); return }
             }
         }
@@ -195,7 +195,7 @@ fun AddUrlDialog(req: AddRequest, onClose: () -> Unit) {
             }
         }
         if (VideoEngine.looksLikeVideoSite(url)) {
-            TextButton(onClick = { onClose(); Ui.go(Screen.Video(url.trim(), 0, req.referer)) }) {
+            TextButton(onClick = { onClose(); onNavigate(Screen.Video(url.trim(), 0, req.referer)) }) {
                 Ico(R.drawable.ic_smart_display); Spacer(Modifier.width(6.dp)); Text(tr("This is a video page: get the video", "هذه صفحة فيديو: جلب الفيديو"))
             }
         }
@@ -223,7 +223,7 @@ fun AddUrlDialog(req: AddRequest, onClose: () -> Unit) {
             when (choice) {
                 1 -> commit(pendingStart, numbered = true)
                 2 -> { Manager.delete(listOf(d.id), false); commit(pendingStart, replace = true) }
-                3 -> { onClose(); if (d.status == St.DONE) Ui.go(Screen.Details(d.id)) else Manager.start(d.id) }
+                3 -> { onClose(); if (d.status == St.DONE) onNavigate(Screen.Details(d.id)) else Manager.start(d.id) }
             }
         }
     }
