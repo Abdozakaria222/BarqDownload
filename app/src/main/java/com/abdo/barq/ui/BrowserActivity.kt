@@ -91,7 +91,7 @@ class BrowserActivity : AppCompatActivity() {
     private val media = mutableStateListOf<Media>()
     private val seen = ConcurrentHashMap.newKeySet<String>()
     private var pageUrl by mutableStateOf("")
-    private var progress by mutableIntStateOf(0)
+    private var loadProgress by mutableIntStateOf(0)
     private var add by mutableStateOf<AddRequest?>(null)
     private var linkMenu by mutableStateOf<String?>(null)
     private var address by mutableStateOf<String?>(null)
@@ -182,7 +182,7 @@ class BrowserActivity : AppCompatActivity() {
         CookieManager.getInstance().setAcceptCookie(true)
         CookieManager.getInstance().setAcceptThirdPartyCookies(w, true)
         w.webChromeClient = object : WebChromeClient() {
-            override fun onProgressChanged(view: WebView?, newProgress: Int) { progress = newProgress }
+            override fun onProgressChanged(view: WebView?, newProgress: Int) { loadProgress = newProgress }
         }
         w.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -308,7 +308,7 @@ class BrowserActivity : AppCompatActivity() {
                             }
                         },
                     )
-                    if (progress in 1..99) LinearProgressIndicator(progress = { progress / 100f }, modifier = Modifier.fillMaxWidth().height(2.dp))
+                    if (loadProgress in 1..99) LinearProgressIndicator(progress = { loadProgress / 100f }, modifier = Modifier.fillMaxWidth().height(2.dp))
                 }
             },
             floatingActionButton = {

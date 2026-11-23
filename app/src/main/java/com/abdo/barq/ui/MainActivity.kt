@@ -61,9 +61,9 @@ class MainActivity : AppCompatActivity() {
         val need = ArrayList<String>()
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
             need.add(Manifest.permission.POST_NOTIFICATIONS)
-        if (Build.VERSION.SDK_INT <= 28 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        if (Build.VERSION.SDK_INT <= 29 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
             need.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        if (need.isNotEmpty() && (Prefs.firstRun || Build.VERSION.SDK_INT <= 28)) runCatching { askPermission.launch(need.toTypedArray()) }
+        if (need.isNotEmpty() && (Prefs.firstRun || Build.VERSION.SDK_INT <= 29)) runCatching { askPermission.launch(need.toTypedArray()) }
         if (Prefs.firstRun) {
             Prefs.firstRun = false
         } else if (Prefs.showTips) Ui.showTips = true
